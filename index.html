@@ -513,19 +513,30 @@
 <script>
     // ضع رابط Google Apps Script بين العلامتين ""
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMFPgPGJ1S_PmxryF6b4lY7ldHt3zF2WAXAhHWU4ylob52ASlEvUX-qe2Ljp0n4TCv/exec";
-
     const music = document.getElementById('bgMusic');
     const audioBtn = document.getElementById('audioToggle');
     let isPlaying = false;
 
+    // دالة تشغيل الصوت
     function playAudio() {
-        music.play().then(() => {
-            isPlaying = true;
-            audioBtn.innerText = '🎵';
-        }).catch(err => {
-            console.log("Audio play blocked by browser:", err);
-        });
+        if (!isPlaying) {
+            music.play().then(() => {
+                isPlaying = true;
+                audioBtn.innerText = '🎵';
+            }).catch(err => {
+                console.log("Audio play attempt blocked:", err);
+            });
+        }
     }
+
+    // تشغيل تلقائي مع أول لمسة أو ضغطة في أي مكان بالصفحة
+    document.addEventListener('click', function() {
+        playAudio();
+    }, { once: true });
+
+    document.addEventListener('touchstart', function() {
+        playAudio();
+    }, { once: true });
 
     function toggleAudio() {
         if (isPlaying) {
