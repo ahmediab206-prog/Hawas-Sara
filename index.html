@@ -2,9 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>دعوة زفاف</title>
     <!-- Google Fonts -->
@@ -387,7 +387,7 @@
     <div class="audio-control-btn" id="audioToggle" onclick="toggleAudio()">🎵</div>
 
     <!-- عنصر الصوت -->
-<audio id="bgMusic" loop src="song.mp3?v=2"></audio>
+    <audio id="bgMusic" loop src="song.mp3?v=2"></audio>
 
     <!-- Page 0: Envelope Cover -->
     <section class="page active" id="page0">
@@ -515,10 +515,20 @@
 
 <script>
     // ضع رابط Google Apps Script بين العلامتين ""
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMFPgPGJ1S_PmxryF6b4lY7ldHt3zF2WAXAhHWU4ylob52ASlEvUX-qe2Ljp0n4TCv/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZkTKftswTailBm4xOnIs0QIdkAplpkiU4xy70sQDqbBDXqfajT5ywa_Y-xSfqWLXE/exec";
     const music = document.getElementById('bgMusic');
     const audioBtn = document.getElementById('audioToggle');
     let isPlaying = false;
+
+    // تسجيل زيادة الزيارات تلقائياً بمجرد دخول أي شخص للموقع
+    window.addEventListener('DOMContentLoaded', function() {
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: "visit" })
+        }).catch(err => console.log("Visit log error:", err));
+    });
 
     // دالة تشغيل الصوت
     function playAudio() {
@@ -596,6 +606,7 @@
         const time = new Date().toLocaleString('ar-EG');
 
         const payload = {
+            type: "wish",
             name: name,
             message: message,
             time: time
