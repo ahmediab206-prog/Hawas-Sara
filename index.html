@@ -2,182 +2,635 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة التبريكات والزيارات</title>
+    <title>دعوة زفاف</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700&family=Cinzel:wght@500;700&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+    
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
+        :root {
+            --bg-royal-blue: #0f1f33;
+            --bg-gold-paper: #e2c992;
+            --text-blue: #14263d;
+            --gold-accent: #b88e3d;
+            --gold-light: #f3e0b5;
+            --card-inner-bg: #edd9b1;
         }
 
-        body {
-            background-color: #f4f7f6;
-            color: #333;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; 
+            background-color: var(--bg-royal-blue);
+            color: var(--text-blue);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
         }
 
-        .container {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
+        .app-container {
             width: 100%;
-            padding: 30px;
-            text-align: center;
+            max-width: 420px;
+            height: 100vh;
+            max-height: 850px;
+            position: relative;
+            background: var(--bg-gold-paper);
+            border: 2px solid var(--gold-accent);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
         }
 
-        h2 {
-            color: #2c3e50;
-            margin-bottom: 20px;
+        @media (min-width: 768px) {
+            .app-container {
+                height: 90vh;
+                border-radius: 20px;
+            }
         }
 
-        .form-group {
-            margin-bottom: 15px;
-            text-align: right;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type="text"]:focus, textarea:focus {
-            border-color: #3498db;
-            outline: none;
-        }
-
-        button {
-            width: 100%;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 16px;
+        /* زر التحكم بالصوت العائم */
+        .audio-control-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(15, 31, 51, 0.85);
+            color: var(--gold-light);
+            border: 1px solid var(--gold-accent);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
         }
 
-        button:hover {
-            background-color: #2980b9;
+        .page {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateY(15px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px 80px 20px;
+            background-color: #d6b879;
+            background-image: 
+                radial-gradient(circle at 50% 50%, #edd8ad 0%, #cba766 100%),
+                radial-gradient(circle, var(--gold-accent) 1px, transparent 1px);
+            background-size: 100% 100%, 20px 20px;
         }
 
-        #statusMessage {
-            margin-top: 15px;
-            font-size: 14px;
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .page-border {
+            position: absolute;
+            top: 12px; left: 12px; right: 12px; bottom: 12px;
+            border: 2px solid var(--text-blue);
+            border-radius: 10px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .page-border::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 4px; right: 4px; bottom: 4px;
+            border: 1px dashed var(--gold-accent);
+            border-radius: 8px;
+        }
+
+        .corner-pattern {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--gold-accent);
+            z-index: 3;
+            pointer-events: none;
+        }
+        .top-left { top: 18px; left: 18px; border-right: none; border-bottom: none; }
+        .top-right { top: 18px; right: 18px; border-left: none; border-bottom: none; }
+        .bottom-left { bottom: 18px; left: 18px; border-right: none; border-top: none; }
+        .bottom-right { bottom: 18px; right: 18px; border-left: none; border-top: none; }
+
+        .royal-arch {
+            position: absolute;
+            top: 25px;
+            color: var(--text-blue);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            font-weight: bold;
+            z-index: 3;
+        }
+
+        #page0 {
+            background: radial-gradient(circle, #1a3352 0%, #09131f 100%);
+            color: #ffffff;
+        }
+
+        #page0 .royal-arch {
+            color: var(--gold-light);
+        }
+
+        .real-envelope {
+            position: relative;
+            width: 290px;
+            height: 190px;
+            background: #caaa6b;
+            border: 2px solid var(--gold-light);
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 20px;
+            perspective: 600px;
+            z-index: 3;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            width: 0; height: 0;
+            border-left: 145px solid transparent;
+            border-right: 145px solid transparent;
+            border-top: 110px solid #ba9858;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 3;
+        }
+
+        .wax-seal {
+            position: absolute;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 58px;
+            height: 58px;
+            background: radial-gradient(circle, #1c3350 0%, #0d1a2d 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--gold-light);
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border: 2px solid var(--gold-accent);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 4;
+            animation: pulse 2s infinite;
+        }
+
+        .real-envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .real-envelope.open .wax-seal {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+
+        .nav-btn-container {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            color: var(--gold-light);
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: var(--text-blue);
+            padding: 8px 22px;
+            border-radius: 25px;
+            border: 1px solid var(--gold-accent);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        #page0 .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-color: var(--gold-light);
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.95);
+            background: var(--gold-accent);
+            color: var(--text-blue);
+        }
+
+        .card-frame {
+            background: var(--card-inner-bg);
+            border: 2px solid var(--text-blue);
+            border-radius: 12px;
+            padding: 25px 18px;
+            text-align: center;
+            width: 100%;
+            box-shadow: inset 0 0 15px rgba(184, 142, 61, 0.3), 0 8px 20px rgba(0,0,0,0.15);
+            z-index: 3;
+            position: relative;
+        }
+
+        .poem-text {
+            font-family: 'Aref Ruqaa', serif;
+            font-size: 1.35rem;
+            color: var(--text-blue);
+            line-height: 2.1;
             font-weight: bold;
         }
 
-        .success {
-            color: #27ae60;
+        .couple-names {
+            font-family: 'Cinzel', 'Reem Kufi', serif;
+            font-size: 2.1rem;
+            color: var(--text-blue);
+            margin: 10px 0;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
 
-        .error {
-            color: #e74c3c;
+        .wedding-date {
+            font-size: 0.95rem;
+            color: #7a5818;
+            margin-bottom: 15px;
+            font-weight: 700;
         }
+
+        .timer-container {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .time-box {
+            background: var(--text-blue);
+            border: 1px solid var(--gold-accent);
+            border-radius: 6px;
+            padding: 6px 4px;
+            min-width: 52px;
+            color: #ffffff;
+        }
+
+        .time-box span {
+            display: block;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--gold-light);
+        }
+
+        .time-box label {
+            font-size: 0.6rem;
+            color: #d0d0d0;
+        }
+
+        .location-title {
+            font-family: 'Aref Ruqaa', serif;
+            font-size: 1.4rem;
+            color: var(--text-blue);
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .map-btn {
+            display: inline-block;
+            background: var(--text-blue);
+            color: var(--gold-light);
+            font-weight: bold;
+            padding: 10px 22px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            border: 1px solid var(--gold-accent);
+        }
+
+        .form-group { margin-bottom: 12px; text-align: right; }
+        .form-group label { display: block; margin-bottom: 4px; font-size: 0.85rem; color: var(--text-blue); font-weight: bold; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 10px;
+            background: #f7ede0;
+            border: 1px solid var(--gold-accent);
+            border-radius: 6px; color: var(--text-blue); outline: none; font-size: 0.85rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--text-blue);
+            color: var(--gold-light);
+            border: 1px solid var(--gold-accent);
+            padding: 11px; font-size: 0.9rem; font-weight: bold; border-radius: 20px; cursor: pointer;
+        }
+
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 31, 51, 0.88); justify-content: center; align-items: center; z-index: 200; padding: 20px;
+        }
+
+        .modal-box {
+            background: var(--card-inner-bg); border: 2px solid var(--gold-accent); border-radius: 12px;
+            padding: 25px 20px; text-align: center; max-width: 310px;
+        }
+
+        .modal-box h3 { color: var(--text-blue); font-family: 'Aref Ruqaa', serif; margin-bottom: 10px; font-size: 1.4rem; }
+        .modal-box p { color: var(--text-blue); font-size: 0.85rem; margin-bottom: 18px; line-height: 1.6; }
+        .close-btn { background: var(--text-blue); color: var(--gold-light); border: 1px solid var(--gold-accent); padding: 8px 22px; border-radius: 15px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>أرسل تهنئتك</h2>
+<div class="app-container">
+
+    <!-- زر التحكم بالصوت العائم -->
+    <div class="audio-control-btn" id="audioToggle" onclick="toggleAudio()">🎵</div>
+
+    <!-- عنصر الصوت -->
+    <audio id="bgMusic" loop src="song.mp3?v=2"></audio>
+
+    <!-- Page 0: Envelope Cover -->
+    <section class="page active" id="page0">
+        <div class="royal-arch">WEDDING INVITATION</div>
         
-        <form id="wishForm">
-            <div class="form-group">
-                <label for="name">الاسم:</label>
-                <input type="text" id="name" required placeholder="أدخل اسمك الكريم">
+        <div class="real-envelope" id="envelopeBox" onclick="openEnvelopeAnimation()">
+            <div class="envelope-flap"></div>
+            <div class="wax-seal">OPEN</div>
+            <div style="color: var(--text-blue); font-size: 0.85rem; opacity: 0.9; z-index: 2; font-weight: bold;">اضغط لفتح الدعوة ✨</div>
+        </div>
+
+        <div class="nav-btn-container">
+            <div class="nav-btn" onclick="openEnvelopeAnimation()">افتح الدعوة ↓</div>
+        </div>
+    </section>
+
+    <!-- Page 1: Poem -->
+    <section class="page" id="page1">
+        <div class="page-border"></div>
+        <div class="corner-pattern top-left"></div>
+        <div class="corner-pattern top-right"></div>
+        <div class="corner-pattern bottom-left"></div>
+        <div class="corner-pattern bottom-right"></div>
+
+        <div class="royal-arch">❖ ✤ ❖</div>
+        <div class="card-frame">
+            <div class="poem-text">
+                "يا رب تفضل حلاوة سلام أول لقا بآيادينا.. <br>
+                وفرحة أول معادتش الشموع حائا"
             </div>
+        </div>
+        <div class="nav-btn-container">
+            <div class="nav-btn" onclick="goToPage(0)">السابق ↑</div>
+            <div class="nav-btn" onclick="goToPage(2)">التالي ↓</div>
+        </div>
+    </section>
 
-            <div class="form-group">
-                <label for="message">التهنئة / الرسالة:</label>
-                <textarea id="message" rows="4" required placeholder="أكتب تهنئتك هنا..."></textarea>
+    <!-- Page 2: Names & Timer -->
+    <section class="page" id="page2">
+        <div class="page-border"></div>
+        <div class="corner-pattern top-left"></div>
+        <div class="corner-pattern top-right"></div>
+        <div class="corner-pattern bottom-left"></div>
+        <div class="corner-pattern bottom-right"></div>
+
+        <div class="royal-arch">❖ ✤ ❖</div>
+        <div class="card-frame">
+            <div style="font-size: 0.85rem; color: var(--text-blue); font-weight: 700;">تتشرف عائلتنا بدعوتكم لحضور حفل زفاف</div>
+            <div class="couple-names">محمود & سارة</div>
+            <div class="wedding-date">الجمعة، 28 أغسطس 2026</div>
+
+            <div class="timer-container">
+                <div class="time-box"><span id="days">00</span><label>يوم</label></div>
+                <div class="time-box"><span id="hours">00</span><label>ساعة</label></div>
+                <div class="time-box"><span id="minutes">00</span><label>دقيقة</label></div>
+                <div class="time-box"><span id="seconds">00</span><label>ثانية</label></div>
             </div>
+        </div>
+        <div class="nav-btn-container">
+            <div class="nav-btn" onclick="goToPage(1)">السابق ↑</div>
+            <div class="nav-btn" onclick="goToPage(3)">التالي ↓</div>
+        </div>
+    </section>
 
-            <button type="submit" id="submitBtn">إرسال التهنئة</button>
-        </form>
+    <!-- Page 3: Location -->
+    <section class="page" id="page3">
+        <div class="page-border"></div>
+        <div class="corner-pattern top-left"></div>
+        <div class="corner-pattern top-right"></div>
+        <div class="corner-pattern bottom-left"></div>
+        <div class="corner-pattern bottom-right"></div>
 
-        <div id="statusMessage"></div>
+        <div class="royal-arch">❖ ✤ ❖</div>
+        <div class="card-frame">
+            <div class="location-title">تفاصيل الحفل</div>
+            <div style="font-size: 1rem; font-weight: bold; margin-bottom: 5px; color: var(--text-blue);">قرية حمام قاعة جراند بلازا</div>
+            <div style="font-size: 0.85rem; color: var(--text-blue); font-weight: 600;">تفتح الأبواب الساعة 8:00 مساءً</div>
+            <a href="https://maps.app.goo.gl/yFQt728E2cbJx5Qu9" target="_blank" class="map-btn">📍 موقع القاعة على الخريطة</a>
+        </div>
+        <div class="nav-btn-container">
+            <div class="nav-btn" onclick="goToPage(2)">السابق ↑</div>
+            <div class="nav-btn" onclick="goToPage(4)">التالي ↓</div>
+        </div>
+    </section>
+
+    <!-- Page 4: Guestbook -->
+    <section class="page" id="page4">
+        <div class="page-border"></div>
+        <div class="corner-pattern top-left"></div>
+        <div class="corner-pattern top-right"></div>
+        <div class="corner-pattern bottom-left"></div>
+        <div class="corner-pattern bottom-right"></div>
+
+        <div class="royal-arch">❖ ✤ ❖</div>
+        <div class="card-frame">
+            <div class="location-title">اكتب لنا مباركة</div>
+            <form id="wishesForm">
+                <div class="form-group">
+                    <label>الاسم:</label>
+                    <input type="text" id="guestName" required placeholder="اكتب اسمك الكريـم">
+                </div>
+                <div class="form-group">
+                    <label>تهنئتك للعروسين:</label>
+                    <textarea id="guestMessage" rows="3" required placeholder="اكتب كلمة لطيفة للذكرى..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">إرسال التهنئة ✨</button>
+            </form>
+        </div>
+        <div class="nav-btn-container">
+            <div class="nav-btn" onclick="goToPage(3)">السابق ↑</div>
+        </div>
+    </section>
+
+</div>
+
+<!-- Fun Popup Modal -->
+<div class="modal-overlay" id="funModal">
+    <div class="modal-box">
+        <h3>وصلت مباركتك! 🎉</h3>
+        <p>تم تسجيل تهنئتك بنجاح.. عقبال ما نحضر فرحك ونردها لك في القريب العاجل يا رب! 🥳</p>
+        <p>متنساش النقطة معاك</p>
+        <button class="close-btn" onclick="closeModal()">حسناً ✨</button>
     </div>
+</div>
 
-    <script>
-        // ضع رابط Google Apps Script الخاص بك هنا
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRRfbgXZEylEMZb1kpqdKR-rD-ZipluSh-7GhnkfNjdJjOsW_2o9Tygap1bHlCIaz9/exec";
+<script>
+    // ضع رابط Google Apps Script بين العلامتين ""
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9x8-nLgMFZdtydYoRochucG-dDcjWv5GxeBGdTcpOKfv8V8xtMLDE88whOwkMsdQw/exec";
+    const music = document.getElementById('bgMusic');
+    const audioBtn = document.getElementById('audioToggle');
+    let isPlaying = false;
 
-        // 1. تسجيل الزيارة فور تحميل الصفحة دون مشاكل CORS
-        window.addEventListener('DOMContentLoaded', function() {
-            if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("YOUR_SCRIPT_ID")) {
-                const visitUrl = `${GOOGLE_SCRIPT_URL}?action=visit&t=${new Date().getTime()}`;
-                const img = new Image();
-                img.src = visitUrl;
-            }
-        });
+    // 1. إرسال تسجيل زيادة الزيارات تلقائياً بمجرد فتح الصفحة
+    window.addEventListener('DOMContentLoaded', function() {
+        if (GOOGLE_SCRIPT_URL) {
+            new Image().src = GOOGLE_SCRIPT_URL + "?action=visit&t=" + Date.now();
+        }
+    });
 
-        // 2. معالجة إرسال نموذج التهنئة عبر POST
-        document.getElementById('wishForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const name = document.getElementById('name').value.trim();
-            const message = document.getElementById('message').value.trim();
-            const statusDiv = document.getElementById('statusMessage');
-            const submitBtn = document.getElementById('submitBtn');
-
-            if (!name || !message) {
-                statusDiv.className = 'error';
-                statusDiv.innerText = 'يرجى ملء جميع الحقول المطلوب.';
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'جاري الإرسال...';
-            statusDiv.innerText = '';
-
-            const payload = {
-                type: "wish",
-                name: name,
-                message: message,
-                time: new Date().toLocaleString('ar-EG')
-            };
-
-            fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(() => {
-                statusDiv.className = 'success';
-                statusDiv.innerText = 'تم إرسال تهنئتك بنجاح، شكراً لك!';
-                document.getElementById('wishForm').reset();
-            })
-            .catch(error => {
-                statusDiv.className = 'error';
-                statusDiv.innerText = 'حدث خطأ أثناء الإرسال، يرجى المحاولة لاحقاً.';
-                console.error('Error:', error);
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'إرسال التهنئة';
+    // دالة تشغيل الصوت
+    function playAudio() {
+        if (!isPlaying) {
+            music.play().then(() => {
+                isPlaying = true;
+                audioBtn.innerText = '🎵';
+            }).catch(err => {
+                console.log("Audio play attempt blocked:", err);
             });
+        }
+    }
+
+    // تشغيل تلقائي مع أول لمسة أو ضغطة في أي مكان بالصفحة
+    document.addEventListener('click', function() {
+        playAudio();
+    }, { once: true });
+
+    document.addEventListener('touchstart', function() {
+        playAudio();
+    }, { once: true });
+
+    function toggleAudio() {
+        if (isPlaying) {
+            music.pause();
+            isPlaying = false;
+            audioBtn.innerText = '🔇';
+        } else {
+            playAudio();
+        }
+    }
+
+    function goToPage(pageNum) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const targetPage = document.getElementById('page' + pageNum);
+        if (targetPage) {
+            targetPage.classList.add('active');
+        }
+    }
+
+    function openEnvelopeAnimation() {
+        playAudio();
+        const env = document.getElementById('envelopeBox');
+        env.classList.add('open');
+        setTimeout(() => {
+            goToPage(1);
+            env.classList.remove('open');
+        }, 600);
+    }
+
+    // العداد التنازلي
+    const weddingDate = new Date("Aug 28, 2026 19:00:00").getTime();
+    setInterval(function() {
+        const now = new Date().getTime();
+        const distance = weddingDate - now;
+
+        if (distance > 0) {
+            document.getElementById("days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
+            document.getElementById("hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById("minutes").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById("seconds").innerText = Math.floor((distance % (1000 * 60)) / 1000);
+        }
+    }, 1000);
+
+    // إرسال التهنئة إلى Google Sheets
+    document.getElementById('wishesForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'جاري الإرسال... ⏳';
+
+        const name = document.getElementById('guestName').value;
+        const message = document.getElementById('guestMessage').value;
+        const time = new Date().toLocaleString('ar-EG');
+
+        const payload = {
+            name: name,
+            message: message,
+            time: time
+        };
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            this.reset();
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'إرسال التهنئة ✨';
+            document.getElementById('funModal').style.display = 'flex';
+        })
+        .catch(err => {
+            alert('حدث خطأ أثناء الإرسال، برجاء المحاولة مرة أخرى.');
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'إرسال التهنئة ✨';
         });
-    </script>
+    });
+
+    function closeModal() {
+        document.getElementById('funModal').style.display = 'none';
+    }
+</script>
+
 </body>
 </html>
